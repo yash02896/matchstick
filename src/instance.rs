@@ -5,11 +5,13 @@ use graph::{
     blockchain::{Blockchain, HostFnCtx},
     cheap_clone::CheapClone,
     components::store::{DeploymentId, DeploymentLocator},
+    data::subgraph::SubgraphManifest,
+    ipfs_client::IpfsClient,
     prelude::{DeploymentHash, Duration, HostMetrics, StopwatchMetrics},
     runtime::HostExportError,
     semver::Version,
 };
-use graph_chain_ethereum::Chain;
+use graph_chain_ethereum::{Chain, DataSourceTemplate};
 use graph_mock::MockMetricsRegistry;
 use graph_runtime_test::common::{mock_context, mock_data_source};
 use graph_runtime_wasm::{
@@ -17,6 +19,8 @@ use graph_runtime_wasm::{
     module::{IntoTrap, IntoWasmRet, TimeoutStopwatch, WasmInstanceContext},
     ExperimentalFeatures, MappingContext, ValidModule,
 };
+use tokio::runtime::Runtime;
+use lazy_static::__Deref;
 
 use crate::subgraph_store::MockSubgraphStore;
 use crate::{context::MatchstickInstanceContext, logging::Log};
@@ -61,6 +65,31 @@ impl<C: Blockchain> MatchstickInstance<C> {
         };
 
         let mock_subgraph_store = MockSubgraphStore {};
+        let mut data_source_templates = Arc::new(vec!());
+        let it = async {
+            let subgraph_id = "ipfsMap";
+            let deployment_id = &DeploymentHash::new(subgraph_id).unwrap_or_else(|err| {
+                panic!(
+                    "{}",
+                    Log::Critical(format!("Could not create deployment id: {}", err)),
+                );
+            });
+            let subgraph_yaml_contents = std::fs::read_to_string("subgraph.yaml")
+                .expect("❌ ❌ ❌  Something went wrong reading the 'subgraph.yaml' file.");
+            let this = graph_core::LinkResolver::from(IpfsClient::localhost());
+            let that = graph::slog::Logger::root(graph::slog::Discard, graph::prelude::o!());
+            let manifest = SubgraphManifest::<Chain>::resolve_from_raw(
+                deployment_id.clone(),
+                serde_yaml::from_str(&subgraph_yaml_contents).unwrap(),
+                &this,
+                &that,
+                Version::new(0, 0, 5)
+            ).await.unwrap();
+            data_source_templates = Arc::new(manifest.templates);
+        };
+        Runtime::new()
+            .expect("Failed to create Tokio runtime")
+            .block_on(it);
 
         let valid_module = Arc::new(
             ValidModule::new(
@@ -89,7 +118,7 @@ impl<C: Blockchain> MatchstickInstance<C> {
                 deployment,
                 data_source,
                 Arc::from(mock_subgraph_store),
-                Version::new(0, 0, 5),
+                data_source_templates
             ),
             host_metrics,
             None,
@@ -412,7 +441,7 @@ impl<C: Blockchain> MatchstickInstance<C> {
             y_ptr
         );
 
-        link!("dataSource.create", mock_data_source_create, name, params);
+        link!("dataSource.create", wasm_ctx.data_source_create, name, params);
         link!(
             "dataSource.createWithContext",
             mock_data_source_create_with_context,

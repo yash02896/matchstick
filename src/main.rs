@@ -7,8 +7,9 @@ use std::time::Instant;
 
 use clap::{App, Arg};
 use colored::Colorize;
+use graph_core::load_dynamic_data_sources;
 use graph_chain_ethereum::Chain;
-use serde_yaml::Value;
+use serde_yaml::{Value, Mapping};
 
 use crate::compiler::{CompileOutput, Compiler};
 use crate::instance::MatchstickInstance;
@@ -149,6 +150,8 @@ ___  ___      _       _         _   _      _
         default_tests_folder
     });
     TESTS_LOCATION.with(|path| *path.borrow_mut() = tests_folder.as_str().unwrap().to_string());
+
+    let test = subgraph_yaml.get("templates").unwrap();
 
     let test_sources = {
         let testable = get_testable();
