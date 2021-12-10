@@ -7,14 +7,15 @@ use std::time::Instant;
 
 use clap::{App, Arg};
 use colored::Colorize;
-use graph_core::load_dynamic_data_sources;
+// use graph_core::load_dynamic_data_sources;
+use graph::prelude::chrono::prelude::*;
 use graph_chain_ethereum::Chain;
 use serde_yaml::{Value, Mapping};
 
 use crate::compiler::{CompileOutput, Compiler};
 use crate::instance::MatchstickInstance;
 use crate::logging::Log;
-use crate::test_suite::TestSuite;
+use crate::test_suite::{TestResult, TestSuite};
 
 use crate::coverage::generate_coverage_report;
 
@@ -87,7 +88,7 @@ fn get_testable() -> HashMap<String, fs::DirEntry> {
 
 fn main() {
     let matches = App::new("Matchstick 🔥")
-        .version("0.2.0")
+        .version("0.2.1")
         .author("Limechain <https://limechain.tech>")
         .about("Unit testing framework for Subgraph development on The Graph protocol.")
         .arg(
@@ -199,7 +200,7 @@ ___  ___      _       _         _   _      _
 
     let outputs: HashMap<String, CompileOutput> = test_sources
         .into_iter()
-        .map(|(name, entry)| (name.clone(), compiler.compile(name, entry)))
+        .map(|(name, entry)| (name.clone(), compiler.execute(name, entry)))
         .collect();
 
     if outputs.values().any(|output| !output.status.success()) {
@@ -242,39 +243,67 @@ ___  ___      _       _         _   _      _
         .map(|(key, val)| (key.clone(), TestSuite::from(val)))
         .collect();
 
-    let mut passed_tests = 0;
-    let mut failed_tests = 0;
-    println!("{}", ("Igniting tests 🔥\n").to_string().bright_red());
-    test_suites.iter().for_each(|(key, val)| {
-        println!("🧪 Running Test Suite: {}", key.blue());
-        println!("{}\n", "=".repeat(50));
-        logging::add_indent();
-        for test in &val.tests {
-            if test.run().passed {
-                passed_tests += 1;
+    println!("{}", ("\nIgniting tests 🔥\n").to_string().bright_red());
+
+    let (mut num_passed, mut num_failed) = (0, 0);
+    let failed_suites: HashMap<String, HashMap<String, TestResult>> = test_suites
+        .into_iter()
+        .filter_map(|(name, suite)| {
+            println!("🧪 Running Test Suite: {}", name.bright_blue());
+            println!("{}\n", "=".repeat(50));
+            logging::add_indent();
+            let failed: HashMap<String, TestResult> = suite
+                .tests
+                .into_iter()
+                .filter_map(|test| {
+                    let result = test.run();
+                    if result.passed {
+                        num_passed += 1;
+                        None
+                    } else {
+                        num_failed += 1;
+                        Some((test.name, result))
+                    }
+                })
+                .collect();
+            logging::clear_indent();
+            println!();
+
+            if failed.is_empty() {
+                None
             } else {
-                failed_tests += 1;
+                Some((name, failed))
+            }
+        })
+        .collect();
+
+    if num_failed > 0 {
+        let failed = format!("{} failed", num_failed).red();
+        let passed = format!("{} passed", num_passed).green();
+        let all = format!("{} total", num_failed + num_passed);
+
+        println!("Failed tests: \n");
+        for (suite, tests) in failed_suites {
+            for (name, result) in tests {
+                println!("{} {}", suite.bright_blue(), name.red(),);
+
+                if !result.logs.is_empty() {
+                    println!("{}", result.logs);
+                }
             }
         }
-        logging::clear_indent();
-        println!();
-    });
-
-    if failed_tests > 0 {
-        let failed = format!("{} failed", failed_tests).red();
-        let passed = format!("{} passed", passed_tests).green();
-        let all = format!("{} total", failed_tests + passed_tests);
 
         println!("\n{}, {}, {}", failed, passed, all);
-        println!("Program execution time: {:?}", now.elapsed());
-        std::process::exit(1);
     } else {
-        println!("\n{}", ("All tests passed! 😎").to_string().green());
+        println!(
+            "\n{}",
+            format!("All {} tests passed! 😎", num_passed).green()
+        );
     }
 
     println!(
-        "{} tests executed in {:?}.",
-        failed_tests + passed_tests,
-        now.elapsed(),
+        "\n[{}] Program executed in: {:.3?}.",
+        Local::now().to_rfc2822(),
+        now.elapsed()
     );
 }
