@@ -1271,7 +1271,7 @@ dependencies = [
  "futures-sink",
  "futures-task",
  "memchr",
- "pin-project-lite 0.2.7",
+ "pin-project-lite",
  "pin-utils",
  "proc-macro-hack",
  "proc-macro-nested",
@@ -1330,7 +1330,7 @@ checksum = "f0a01e0497841a3b2db4f8afa483cce65f7e96a3498bd6c541734792aeac8fe7"
 [[package]]
 name = "graph"
 version = "0.25.0"
-source = "git+https://github.com/graphprotocol/graph-node?rev=5ddc3e1994ec9599522ece67c478c8c3d8769d79#5ddc3e1994ec9599522ece67c478c8c3d8769d79"
+source = "git+https://github.com/georg-getz/graph-node?rev=7a833a289db2a749980bb07f2e6de21f1312135c#7a833a289db2a749980bb07f2e6de21f1312135c"
 dependencies = [
  "Inflector",
  "anyhow",
@@ -1391,7 +1391,7 @@ dependencies = [
 [[package]]
 name = "graph-chain-ethereum"
 version = "0.25.0"
-source = "git+https://github.com/graphprotocol/graph-node?rev=5ddc3e1994ec9599522ece67c478c8c3d8769d79#5ddc3e1994ec9599522ece67c478c8c3d8769d79"
+source = "git+https://github.com/georg-getz/graph-node?rev=7a833a289db2a749980bb07f2e6de21f1312135c#7a833a289db2a749980bb07f2e6de21f1312135c"
 dependencies = [
  "anyhow",
  "chrono",
@@ -1418,7 +1418,7 @@ dependencies = [
 [[package]]
 name = "graph-chain-near"
 version = "0.25.0"
-source = "git+https://github.com/graphprotocol/graph-node?rev=5ddc3e1994ec9599522ece67c478c8c3d8769d79#5ddc3e1994ec9599522ece67c478c8c3d8769d79"
+source = "git+https://github.com/georg-getz/graph-node?rev=7a833a289db2a749980bb07f2e6de21f1312135c#7a833a289db2a749980bb07f2e6de21f1312135c"
 dependencies = [
  "base64 0.13.0",
  "graph",
@@ -1433,7 +1433,7 @@ dependencies = [
 [[package]]
 name = "graph-core"
 version = "0.25.0"
-source = "git+https://github.com/graphprotocol/graph-node?rev=5ddc3e1994ec9599522ece67c478c8c3d8769d79#5ddc3e1994ec9599522ece67c478c8c3d8769d79"
+source = "git+https://github.com/georg-getz/graph-node?rev=7a833a289db2a749980bb07f2e6de21f1312135c#7a833a289db2a749980bb07f2e6de21f1312135c"
 dependencies = [
  "async-trait",
  "atomic_refcell",
@@ -1456,7 +1456,7 @@ dependencies = [
 [[package]]
 name = "graph-graphql"
 version = "0.25.0"
-source = "git+https://github.com/graphprotocol/graph-node?rev=5ddc3e1994ec9599522ece67c478c8c3d8769d79#5ddc3e1994ec9599522ece67c478c8c3d8769d79"
+source = "git+https://github.com/georg-getz/graph-node?rev=7a833a289db2a749980bb07f2e6de21f1312135c#7a833a289db2a749980bb07f2e6de21f1312135c"
 dependencies = [
  "Inflector",
  "anyhow",
@@ -1475,7 +1475,7 @@ dependencies = [
 [[package]]
 name = "graph-mock"
 version = "0.25.0"
-source = "git+https://github.com/graphprotocol/graph-node?rev=5ddc3e1994ec9599522ece67c478c8c3d8769d79#5ddc3e1994ec9599522ece67c478c8c3d8769d79"
+source = "git+https://github.com/georg-getz/graph-node?rev=7a833a289db2a749980bb07f2e6de21f1312135c#7a833a289db2a749980bb07f2e6de21f1312135c"
 dependencies = [
  "graph",
 ]
@@ -1483,7 +1483,7 @@ dependencies = [
 [[package]]
 name = "graph-runtime-derive"
 version = "0.25.0"
-source = "git+https://github.com/graphprotocol/graph-node?rev=5ddc3e1994ec9599522ece67c478c8c3d8769d79#5ddc3e1994ec9599522ece67c478c8c3d8769d79"
+source = "git+https://github.com/georg-getz/graph-node?rev=7a833a289db2a749980bb07f2e6de21f1312135c#7a833a289db2a749980bb07f2e6de21f1312135c"
 dependencies = [
  "anyhow",
  "quote 1.0.10",
@@ -1493,7 +1493,7 @@ dependencies = [
 [[package]]
 name = "graph-runtime-test"
 version = "0.25.0"
-source = "git+https://github.com/graphprotocol/graph-node?rev=5ddc3e1994ec9599522ece67c478c8c3d8769d79#5ddc3e1994ec9599522ece67c478c8c3d8769d79"
+source = "git+https://github.com/georg-getz/graph-node?rev=7a833a289db2a749980bb07f2e6de21f1312135c#7a833a289db2a749980bb07f2e6de21f1312135c"
 dependencies = [
  "graph",
  "graph-chain-ethereum",
@@ -1507,7 +1507,7 @@ dependencies = [
 [[package]]
 name = "graph-runtime-wasm"
 version = "0.25.0"
-source = "git+https://github.com/graphprotocol/graph-node?rev=5ddc3e1994ec9599522ece67c478c8c3d8769d79#5ddc3e1994ec9599522ece67c478c8c3d8769d79"
+source = "git+https://github.com/georg-getz/graph-node?rev=7a833a289db2a749980bb07f2e6de21f1312135c#7a833a289db2a749980bb07f2e6de21f1312135c"
 dependencies = [
  "anyhow",
  "async-trait",
@@ -1674,7 +1674,7 @@ checksum = "1ff4f84919677303da5f147645dbea6b1881f368d03ac84e1dc09031ebd7b2c6"
 dependencies = [
  "bytes 1.1.0",
  "http 0.2.5",
- "pin-project-lite 0.2.7",
+ "pin-project-lite",
 ]
 
 [[package]]
@@ -1763,7 +1763,7 @@ dependencies = [
  "httparse",
  "httpdate",
  "itoa",
- "pin-project-lite 0.2.7",
+ "pin-project-lite",
  "socket2",
  "tokio 1.14.0",
  "tower-service",
@@ -1796,7 +1796,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "bbb958482e8c7be4bc3cf272a766a2b0bf1a6755e7a6ae777f017a31d11b13b1"
 dependencies = [
  "hyper 0.14.14",
- "pin-project-lite 0.2.7",
+ "pin-project-lite",
  "tokio 1.14.0",
  "tokio-io-timeout",
 ]
@@ -1973,9 +1973,9 @@ dependencies = [
 
 [[package]]
 name = "itertools"
-version = "0.10.1"
+version = "0.10.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "69ddb889f9d0d08a67338271fa9b62996bc788c7796a5c18cf057420aaed5eaf"
+checksum = "a9a9d19fa1e79b6215ff29b9d6880b706147f16e9b1dbb1e4e5947b5b02bc5e3"
 dependencies = [
  "either",
 ]
@@ -2151,13 +2151,14 @@ dependencies = [
  "graph-runtime-test",
  "graph-runtime-wasm",
  "graphql-parser",
+ "itertools",
  "lazy_static",
  "regex",
  "run_script",
  "serde_json",
  "serde_yaml",
  "serial_test",
- "tokio 0.2.25",
+ "tokio 1.14.0",
  "wasmtime",
  "web3 0.10.0-graph",
 ]
@@ -2707,12 +2708,6 @@ dependencies = [
  "quote 1.0.10",
  "syn 1.0.81",
 ]
-
-[[package]]
-name = "pin-project-lite"
-version = "0.1.12"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "257b64915a082f7811703966789728173279bdebb956b143dbcd23f6f970a777"
 
 [[package]]
 name = "pin-project-lite"
@@ -3318,7 +3313,7 @@ dependencies = [
  "mime_guess",
  "native-tls",
  "percent-encoding 2.1.0",
- "pin-project-lite 0.2.7",
+ "pin-project-lite",
  "serde",
  "serde_json",
  "serde_urlencoded",
@@ -4142,26 +4137,6 @@ dependencies = [
 
 [[package]]
 name = "tokio"
-version = "0.2.25"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "6703a273949a90131b290be1fe7b039d0fc884aa1935860dfcbe056f28cd8092"
-dependencies = [
- "bytes 0.5.6",
- "fnv",
- "futures-core",
- "iovec",
- "lazy_static",
- "libc",
- "mio 0.6.23",
- "mio-uds",
- "num_cpus",
- "pin-project-lite 0.1.12",
- "slab 0.4.5",
- "tokio-macros 0.2.6",
-]
-
-[[package]]
-name = "tokio"
 version = "1.14.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "70e992e41e0d2fb9f755b37446f20900f64446ef54874f40a60c78f021ac6144"
@@ -4174,9 +4149,9 @@ dependencies = [
  "num_cpus",
  "once_cell",
  "parking_lot 0.11.2",
- "pin-project-lite 0.2.7",
+ "pin-project-lite",
  "signal-hook-registry",
- "tokio-macros 1.6.0",
+ "tokio-macros",
  "winapi 0.3.9",
 ]
 
@@ -4269,19 +4244,8 @@ version = "1.1.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "90c49f106be240de154571dd31fbe48acb10ba6c6dd6f6517ad603abffa42de9"
 dependencies = [
- "pin-project-lite 0.2.7",
+ "pin-project-lite",
  "tokio 1.14.0",
-]
-
-[[package]]
-name = "tokio-macros"
-version = "0.2.6"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "e44da00bfc73a25f814cd8d7e57a68a5c31b74b3152a0a1d1f590c97ed06265a"
-dependencies = [
- "proc-macro2 1.0.32",
- "quote 1.0.10",
- "syn 1.0.81",
 ]
 
 [[package]]
@@ -4353,7 +4317,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "50145484efff8818b5ccd256697f36863f587da82cf8b409c53adf1e840798e3"
 dependencies = [
  "futures-core",
- "pin-project-lite 0.2.7",
+ "pin-project-lite",
  "tokio 1.14.0",
  "tokio-util",
 ]
@@ -4493,7 +4457,7 @@ dependencies = [
  "futures-io",
  "futures-sink",
  "log 0.4.14",
- "pin-project-lite 0.2.7",
+ "pin-project-lite",
  "tokio 1.14.0",
 ]
 
@@ -4561,7 +4525,7 @@ dependencies = [
  "futures-util",
  "indexmap",
  "pin-project",
- "pin-project-lite 0.2.7",
+ "pin-project-lite",
  "rand 0.8.4",
  "slab 0.4.5",
  "tokio 1.14.0",
@@ -4592,7 +4556,7 @@ checksum = "375a639232caf30edfc78e8d89b2d4c375515393e7af7e16f01cd96917fb2105"
 dependencies = [
  "cfg-if 1.0.0",
  "log 0.4.14",
- "pin-project-lite 0.2.7",
+ "pin-project-lite",
  "tracing-attributes",
  "tracing-core",
 ]
@@ -5199,7 +5163,7 @@ dependencies = [
 [[package]]
 name = "web3"
 version = "0.15.0-graph"
-source = "git+https://github.com/graphprotocol/rust-web3?branch=lutter/graph-0.15.0#738e547708ab1a4581ce3693d90fcd8df9506a4f"
+source = "git+https://github.com/georg-getz/rust-web3?branch=lutter/graph-0.15.0#53eeeb4b42fc90cd6754500e8ee93874b68bd3d7"
 dependencies = [
  "arrayvec 0.5.2",
  "async-native-tls",

@@ -5,15 +5,15 @@ authors = ["LimeChain <limechain.tech>"]
 edition = "2021"
 
 [dependencies]
-graph = { git = "https://github.com/graphprotocol/graph-node", rev = "5ddc3e1994ec9599522ece67c478c8c3d8769d79" }
-graph-core = { git = "https://github.com/graphprotocol/graph-node", rev = "5ddc3e1994ec9599522ece67c478c8c3d8769d79" }
-graph-chain-ethereum = { git = "https://github.com/graphprotocol/graph-node", rev = "5ddc3e1994ec9599522ece67c478c8c3d8769d79" }
-graph-graphql = { git = "https://github.com/graphprotocol/graph-node", rev = "5ddc3e1994ec9599522ece67c478c8c3d8769d79" }
-graph-mock = { git = "https://github.com/graphprotocol/graph-node", rev = "5ddc3e1994ec9599522ece67c478c8c3d8769d79" }
-graph-runtime-test = { git = "https://github.com/graphprotocol/graph-node", rev = "5ddc3e1994ec9599522ece67c478c8c3d8769d79" }
-graph-runtime-wasm = { git = "https://github.com/graphprotocol/graph-node", rev = "5ddc3e1994ec9599522ece67c478c8c3d8769d79" }
+graph = { git = "https://github.com/georg-getz/graph-node", rev = "7a833a289db2a749980bb07f2e6de21f1312135c" }
+graph-core = { git = "https://github.com/georg-getz/graph-node", rev = "7a833a289db2a749980bb07f2e6de21f1312135c" }
+graph-chain-ethereum = { git = "https://github.com/georg-getz/graph-node", rev = "7a833a289db2a749980bb07f2e6de21f1312135c" }
+graph-graphql = { git = "https://github.com/georg-getz/graph-node", rev = "7a833a289db2a749980bb07f2e6de21f1312135c" }
+graph-mock = { git = "https://github.com/georg-getz/graph-node", rev = "7a833a289db2a749980bb07f2e6de21f1312135c" }
+graph-runtime-test = { git = "https://github.com/georg-getz/graph-node", rev = "7a833a289db2a749980bb07f2e6de21f1312135c" }
+graph-runtime-wasm = { git = "https://github.com/georg-getz/graph-node", rev = "7a833a289db2a749980bb07f2e6de21f1312135c" }
 wasmtime = "0.27.0"
-tokio = { version = "0.2.25", features = ["stream", "rt-threaded", "rt-util", "blocking", "time", "sync", "macros", "test-util", "net"] }
+tokio = { version = "1", features = ["full"] }
 anyhow = "1.0"
 lazy_static = "1.4.0"
 async-trait = "0.1.50"
@@ -24,6 +24,7 @@ run_script = "0.9"
 regex = "1.5.4"
 serde_yaml = "0.8.21"
 graphql-parser = "0.4.0"
+itertools = "0.10.3"
 
 [dev-dependencies]
 serial_test = "0.5.1"

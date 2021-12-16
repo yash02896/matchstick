@@ -19,8 +19,10 @@ use graph_runtime_wasm::{
     module::{IntoTrap, IntoWasmRet, TimeoutStopwatch, WasmInstanceContext},
     ExperimentalFeatures, MappingContext, ValidModule,
 };
-use tokio::runtime::Runtime;
+use tokio::runtime::Handle;
 use lazy_static::__Deref;
+use graph::prelude::LinkResolver;
+use graph::data::subgraph::SubgraphAssignmentProviderError;
 
 use crate::subgraph_store::MockSubgraphStore;
 use crate::{context::MatchstickInstanceContext, logging::Log};
@@ -66,7 +68,7 @@ impl<C: Blockchain> MatchstickInstance<C> {
 
         let mock_subgraph_store = MockSubgraphStore {};
         let mut data_source_templates = Arc::new(vec!());
-        let it = async {
+        Handle::current().spawn(async move {
             let subgraph_id = "ipfsMap";
             let deployment_id = &DeploymentHash::new(subgraph_id).unwrap_or_else(|err| {
                 panic!(
@@ -76,20 +78,26 @@ impl<C: Blockchain> MatchstickInstance<C> {
             });
             let subgraph_yaml_contents = std::fs::read_to_string("subgraph.yaml")
                 .expect("❌ ❌ ❌  Something went wrong reading the 'subgraph.yaml' file.");
-            let this = graph_core::LinkResolver::from(IpfsClient::localhost());
-            let that = graph::slog::Logger::root(graph::slog::Discard, graph::prelude::o!());
+            let link_resolver = graph_core::LinkResolver::from(IpfsClient::localhost());
+            let logger = graph::slog::Logger::root(graph::slog::Discard, graph::prelude::o!());
+
+            let file_bytes = link_resolver
+                .cat(&logger, &deployment_id.to_ipfs_link())
+                .await
+                .map_err(SubgraphAssignmentProviderError::ResolveError).unwrap();
+
+            let raw: serde_yaml::Mapping = serde_yaml::from_slice(&file_bytes)
+                .map_err(|e| SubgraphAssignmentProviderError::ResolveError(e.into())).unwrap();
+
             let manifest = SubgraphManifest::<Chain>::resolve_from_raw(
                 deployment_id.clone(),
-                serde_yaml::from_str(&subgraph_yaml_contents).unwrap(),
-                &this,
-                &that,
-                Version::new(0, 0, 5)
+                raw,
+                &link_resolver,
+                &logger,
+                Version::new(0, 0, 6)
             ).await.unwrap();
             data_source_templates = Arc::new(manifest.templates);
-        };
-        Runtime::new()
-            .expect("Failed to create Tokio runtime")
-            .block_on(it);
+        });
 
         let valid_module = Arc::new(
             ValidModule::new(
@@ -165,7 +173,7 @@ impl<C: Blockchain> MatchstickInstance<C> {
                         None => break interrupt_handle.interrupt(), // Timed out.
 
                         Some(time) if time < minimum_wait => break interrupt_handle.interrupt(),
-                        Some(time) => tokio::time::delay_for(time).await,
+                        Some(time) => tokio::time::sleep(time).await,
                     }
                 }
             });
