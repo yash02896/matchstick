@@ -19,7 +19,7 @@ use graph_runtime_wasm::{
     module::{IntoTrap, IntoWasmRet, TimeoutStopwatch, WasmInstanceContext},
     ExperimentalFeatures, MappingContext, ValidModule,
 };
-use tokio::runtime::Handle;
+use tokio::runtime::{Runtime, Handle};
 use lazy_static::__Deref;
 use graph::prelude::LinkResolver;
 use graph::data::subgraph::SubgraphAssignmentProviderError;
@@ -68,7 +68,7 @@ impl<C: Blockchain> MatchstickInstance<C> {
 
         let mock_subgraph_store = MockSubgraphStore {};
         let mut data_source_templates = Arc::new(vec!());
-        Handle::current().spawn(async move {
+        let it = async {
             let subgraph_id = "ipfsMap";
             let deployment_id = &DeploymentHash::new(subgraph_id).unwrap_or_else(|err| {
                 panic!(
@@ -97,7 +97,9 @@ impl<C: Blockchain> MatchstickInstance<C> {
                 Version::new(0, 0, 6)
             ).await.unwrap();
             data_source_templates = Arc::new(manifest.templates);
-        });
+        };
+
+        Runtime::new().unwrap().block_on(it);
 
         let valid_module = Arc::new(
             ValidModule::new(
@@ -126,7 +128,7 @@ impl<C: Blockchain> MatchstickInstance<C> {
                 deployment,
                 data_source,
                 Arc::from(mock_subgraph_store),
-                Version::new(0, 0, 6)
+                &data_source_templates.clone()
             ),
             host_metrics,
             None,

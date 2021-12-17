@@ -86,8 +86,8 @@ fn get_testable() -> HashMap<String, fs::DirEntry> {
     testable
 }
 
-#[tokio::main]
-async fn main() {
+// #[tokio::main]
+fn main() {
     let matches = App::new("Matchstick 🔥")
         .version("0.2.1")
         .author("Limechain <https://limechain.tech>")
