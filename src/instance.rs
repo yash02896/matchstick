@@ -1,4 +1,4 @@
-use std::{cell::RefCell, rc::Rc, sync::Arc, time::Instant};
+use std::{cell::RefCell, rc::Rc, sync::{Arc, Mutex}, time::Instant};
 
 use anyhow::{anyhow, Context};
 use graph::{
@@ -67,8 +67,9 @@ impl<C: Blockchain> MatchstickInstance<C> {
         };
 
         let mock_subgraph_store = MockSubgraphStore {};
-        let mut data_source_templates = Arc::new(vec!());
-        let it = async {
+        let data_source_templates = Mutex::new(Arc::new(vec!()));
+        let handle = Handle::current();
+        handle.spawn(async move {
             let subgraph_id = "ipfsMap";
             let deployment_id = &DeploymentHash::new(subgraph_id).unwrap_or_else(|err| {
                 panic!(
@@ -96,10 +97,9 @@ impl<C: Blockchain> MatchstickInstance<C> {
                 &logger,
                 Version::new(0, 0, 6)
             ).await.unwrap();
-            data_source_templates = Arc::new(manifest.templates);
-        };
-
-        Runtime::new().unwrap().block_on(it);
+            *data_source_templates.lock().unwrap() = Arc::new(manifest.templates);
+        });
+        // Runtime::new().unwrap().block_on(it);
 
         let valid_module = Arc::new(
             ValidModule::new(
@@ -122,13 +122,13 @@ impl<C: Blockchain> MatchstickInstance<C> {
             }),
         );
 
-        MatchstickInstance::<Chain>::from_valid_module_with_ctx(
+        let x = MatchstickInstance::<Chain>::from_valid_module_with_ctx(
             valid_module,
             mock_context(
                 deployment,
                 data_source,
                 Arc::from(mock_subgraph_store),
-                &data_source_templates.clone()
+                &*data_source_templates.lock().unwrap().clone()
             ),
             host_metrics,
             None,
@@ -142,7 +142,8 @@ impl<C: Blockchain> MatchstickInstance<C> {
                     err,
                 )),
             );
-        })
+        });
+        x
     }
 
     fn from_valid_module_with_ctx(
