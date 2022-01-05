@@ -35,6 +35,37 @@ pub struct MatchstickInstance<C: Blockchain> {
     pub instance_ctx: Rc<RefCell<Option<MatchstickInstanceContext<C>>>>,
 }
 
+async fn test() -> Vec<DataSourceTemplate> {
+    let subgraph_id = "ipfsMap";
+    let deployment_id = &DeploymentHash::new(subgraph_id).unwrap_or_else(|err| {
+        panic!(
+            "{}",
+            Log::Critical(format!("Could not create deployment id: {}", err)),
+        );
+    });
+    let subgraph_yaml_contents = std::fs::read_to_string("subgraph.yaml")
+        .expect("❌ ❌ ❌  Something went wrong reading the 'subgraph.yaml' file.");
+    let link_resolver = graph_core::LinkResolver::from(IpfsClient::localhost());
+    let logger = graph::slog::Logger::root(graph::slog::Discard, graph::prelude::o!());
+
+    let file_bytes = link_resolver
+        .cat(&logger, &deployment_id.to_ipfs_link())
+        .await
+        .map_err(SubgraphAssignmentProviderError::ResolveError).unwrap();
+
+    let raw: serde_yaml::Mapping = serde_yaml::from_slice(&file_bytes)
+        .map_err(|e| SubgraphAssignmentProviderError::ResolveError(e.into())).unwrap();
+
+    let manifest = SubgraphManifest::<Chain>::resolve_from_raw(
+        deployment_id.clone(),
+        raw,
+        &link_resolver,
+        &logger,
+        Version::new(0, 0, 6)
+    ).await.unwrap();
+    manifest.templates
+}
+
 // Initialization functions.
 impl<C: Blockchain> MatchstickInstance<C> {
     pub fn new(path_to_wasm: &str) -> MatchstickInstance<Chain> {
@@ -67,38 +98,10 @@ impl<C: Blockchain> MatchstickInstance<C> {
         };
 
         let mock_subgraph_store = MockSubgraphStore {};
-        let data_source_templates = Mutex::new(Arc::new(vec!()));
+        let data_source_templates = Arc::new(test().await);
         let handle = Handle::current();
-        handle.spawn(async move {
-            let subgraph_id = "ipfsMap";
-            let deployment_id = &DeploymentHash::new(subgraph_id).unwrap_or_else(|err| {
-                panic!(
-                    "{}",
-                    Log::Critical(format!("Could not create deployment id: {}", err)),
-                );
-            });
-            let subgraph_yaml_contents = std::fs::read_to_string("subgraph.yaml")
-                .expect("❌ ❌ ❌  Something went wrong reading the 'subgraph.yaml' file.");
-            let link_resolver = graph_core::LinkResolver::from(IpfsClient::localhost());
-            let logger = graph::slog::Logger::root(graph::slog::Discard, graph::prelude::o!());
-
-            let file_bytes = link_resolver
-                .cat(&logger, &deployment_id.to_ipfs_link())
-                .await
-                .map_err(SubgraphAssignmentProviderError::ResolveError).unwrap();
-
-            let raw: serde_yaml::Mapping = serde_yaml::from_slice(&file_bytes)
-                .map_err(|e| SubgraphAssignmentProviderError::ResolveError(e.into())).unwrap();
-
-            let manifest = SubgraphManifest::<Chain>::resolve_from_raw(
-                deployment_id.clone(),
-                raw,
-                &link_resolver,
-                &logger,
-                Version::new(0, 0, 6)
-            ).await.unwrap();
-            *data_source_templates.lock().unwrap() = Arc::new(manifest.templates);
-        });
+        handle.block_on(test().await);
+        // handle.spawn(async move );
         // Runtime::new().unwrap().block_on(it);
 
         let valid_module = Arc::new(
@@ -128,7 +131,7 @@ impl<C: Blockchain> MatchstickInstance<C> {
                 deployment,
                 data_source,
                 Arc::from(mock_subgraph_store),
-                &*data_source_templates.lock().unwrap().clone()
+                &*data_source_templates
             ),
             host_metrics,
             None,
