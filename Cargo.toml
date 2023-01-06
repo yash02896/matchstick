@@ -13,7 +13,7 @@ graph-mock = { git = "https://github.com/graphprotocol/graph-node", rev = "2d36a
 graph-runtime-test = { git = "https://github.com/graphprotocol/graph-node", rev = "2d36abb15a14e5b529bc3960ac845349ac80dacd" }
 graph-runtime-wasm = { git = "https://github.com/graphprotocol/graph-node", rev = "2d36abb15a14e5b529bc3960ac845349ac80dacd" }
 wasmtime = "0.27.0"
-tokio = "1.15.0"
+tokio = "1.18.4"
 anyhow = "1.0"
 lazy_static = "1.4.0"
 async-trait = "0.1.50"
